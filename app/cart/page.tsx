@@ -13,7 +13,7 @@ export default function CartPage() {
   const { items, updateQuantity, removeItem, total } = useCartStore()
 
   const handleCheckout = () => {
-    // TODO: Implement checkout flow
+   
     router.push("/checkout")
   }
 
