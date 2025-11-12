@@ -26,7 +26,7 @@ api.interceptors.request.use((config) => {
   }
   return config
 })
-
+//type initialization
 export interface Product {
   _id: string
   name: string
