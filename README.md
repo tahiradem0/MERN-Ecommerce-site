@@ -33,8 +33,8 @@ Developed by **Kirubel Mesfin**, this project delivers a seamless shopping exper
 
 1. **Clone this repository**
    ```bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
-   cd <your-repo-name>
+   git clone https://github.com/kirubelm1/MERN-Ecommerce.git
+   cd MERN-Ecommerce
    ```
 
 2. **Install dependencies**
