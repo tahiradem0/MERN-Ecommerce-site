@@ -1,4 +1,4 @@
-# 🛍️ MERN E-Commerce Platform
+# 🛍️ MERN E-Commerce Platform (In-Development)
 ⭐ If you like this project, give it a star on GitHub!
 
 A modern and fully functional **eCommerce website** built using the **MERN stack (MongoDB, Express, React, Node.js)**.  
