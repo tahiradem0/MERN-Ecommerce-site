@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import api from "../config/api"
 import type { Product } from "../types"
 
 export default function Home() {
+  const navigate = useNavigate()
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -52,7 +53,8 @@ export default function Home() {
             {featuredProducts.map((product) => (
               <div
                 key={product._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+                onClick={() => navigate(`/products/${product._id}`)}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
               >
                 <img
                   src={product.imageUrl || "/placeholder.svg"}
