@@ -115,7 +115,9 @@ router.post("/", protect, async (req, res) => {
 // @access  Private
 router.get("/myorders", protect, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 })
+    const orders = await Order.find({ user: req.user._id })
+      .populate("items.product")
+      .sort({ createdAt: -1 })
     res.json(orders)
   } catch (error) {
     console.error("Error fetching orders:", error)

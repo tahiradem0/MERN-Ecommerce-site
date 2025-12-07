@@ -29,9 +29,14 @@ export default function Navbar() {
                 Home
               </Link>
               {user?.role === "customer" && (
-                <Link to="/products" className="text-gray-700 hover:text-blue-600 px-3 py-2">
-                  Products
-                </Link>
+                <>
+                  <Link to="/products" className="text-gray-700 hover:text-blue-600 px-3 py-2">
+                    Products
+                  </Link>
+                  <Link to="/orders" className="text-gray-700 hover:text-blue-600 px-3 py-2">
+                    Orders
+                  </Link>
+                </>
               )}
               {user?.role === "admin" && (
                 <>

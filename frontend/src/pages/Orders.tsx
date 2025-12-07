@@ -25,7 +25,7 @@ export default function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await api.get<Order[]>("/orders/my-orders")
+      const { data } = await api.get<Order[]>("/orders/myorders")
       setOrders(data)
     } catch (error) {
       console.error("Error fetching orders:", error)
@@ -98,7 +98,7 @@ export default function Orders() {
             {orders.map((order) => (
               <div key={order._id} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex justify-between items-start mb-6">
                     <div>
                       <p className="text-sm text-gray-600">Order ID: {order._id}</p>
                       <p className="text-sm text-gray-600">
@@ -112,7 +112,64 @@ export default function Orders() {
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  
+                  {/* Order Progress Tracker */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between relative">
+                      {/* Progress Line */}
+                      <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200">
+                        <div
+                          className="h-full bg-blue-600 transition-all duration-500"
+                          style={{
+                            width:
+                              order.status === "pending"
+                                ? "0%"
+                                : order.status === "processing"
+                                ? "33%"
+                                : order.status === "shipped"
+                                ? "66%"
+                                : "100%",
+                          }}
+                        />
+                      </div>
+                      
+                      {/* Steps */}
+                      {[
+                        { key: "pending", label: "Order Placed", icon: Package },
+                        { key: "processing", label: "Processing", icon: Package },
+                        { key: "shipped", label: "Shipped", icon: Truck },
+                        { key: "delivered", label: "Delivered", icon: CheckCircle },
+                      ].map((step, index) => {
+                        const isActive =
+                          (order.status === "pending" && index === 0) ||
+                          (order.status === "processing" && index <= 1) ||
+                          (order.status === "shipped" && index <= 2) ||
+                          (order.status === "delivered" && index <= 3)
+                        const Icon = step.icon
+                        
+                        return (
+                          <div key={step.key} className="flex flex-col items-center relative z-10">
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                                isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
+                              }`}
+                            >
+                              <Icon className="w-5 h-5" />
+                            </div>
+                            <span
+                              className={`text-xs mt-2 font-medium ${
+                                isActive ? "text-blue-600" : "text-gray-400"
+                              }`}
+                            >
+                              {step.label}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-4">
                     <div>
                       <p className="font-semibold text-gray-900 mb-1">Shipping Address</p>
                       <p className="text-gray-600">{order.shippingAddress.address}</p>

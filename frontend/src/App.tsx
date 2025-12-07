@@ -8,6 +8,7 @@ import Products from "./pages/Products"
 import ProductDetail from "./pages/ProductDetail"
 import Admin from "./pages/Admin"
 import Analytics from "./pages/Analytics"
+import Orders from "./pages/Orders"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
 import OrderConfirmation from "./pages/OrderConfirmation"
@@ -35,6 +36,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="customer">
                 <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute requiredRole="customer">
+                <Orders />
               </ProtectedRoute>
             }
           />

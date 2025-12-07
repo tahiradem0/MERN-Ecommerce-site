@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useCartStore } from "../store/cartStore"
 import { useAuthStore } from "../store/authStore"
@@ -56,8 +56,19 @@ export default function Checkout() {
   }
 
   if (items.length === 0) {
-    navigate("/cart")
-    return null
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Your cart is empty</p>
+          <button
+            onClick={() => navigate("/cart")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Go to Cart
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
