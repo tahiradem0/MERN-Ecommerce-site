@@ -5,6 +5,7 @@ Contributing is highly encouraged
 <p align="center">
   <img src="assets/image.png" width="850" />
   <br />
+   <strong>Homepage UI Preview</strong>
 </p>
 
 ---
