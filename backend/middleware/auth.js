@@ -2,9 +2,30 @@ import jwt from "jsonwebtoken"
 import User from "../models/User.js"
 
 export const protect = async (req, res, next) => {
-  // Development bypass: when DISABLE_AUTH=true, inject a dev user
+  // Development bypass: when DISABLE_AUTH=true, use token if provided, else inject dev user
   if (process.env.DISABLE_AUTH && process.env.DISABLE_AUTH.toLowerCase() === "true") {
     try {
+      // Check if token is provided
+      let token
+      if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1]
+      }
+      
+      if (token) {
+        // Use real token authentication even in dev mode
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET)
+          req.user = await User.findById(decoded.id).select("-password")
+          if (req.user) {
+            next()
+            return
+          }
+        } catch (error) {
+          // Token invalid, fall through to dev user
+        }
+      }
+      
+      // No valid token, use dev admin user
       const devEmail = process.env.ADMIN_EMAIL || "dev@local"
       let devUser = await User.findOne({ email: devEmail })
       if (!devUser) {

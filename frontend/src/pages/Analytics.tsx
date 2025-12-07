@@ -83,7 +83,7 @@ export default function Analytics() {
               </span>
             </div>
             <h3 className="text-gray-500 text-sm mb-1">Total Revenue</h3>
-            <p className="text-2xl font-bold text-gray-900">${stats.totalRevenue.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-gray-900">${(stats.totalRevenue || 0).toFixed(2)}</p>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
