@@ -59,7 +59,7 @@ export default function Products() {
         <h1 className="text-4xl font-bold text-gray-900 mb-8">Our Products</h1>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="lg:w-64 space-y-6">
+          <aside className="lg:w-72 space-y-6 lg:sticky lg:top-20 lg:self-start">
             {/* Category Filter */}
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-4">Categories</h3>
@@ -114,10 +114,10 @@ export default function Products() {
                 </div>
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* Products Grid */}
-          <div className="flex-1">
+          <main className="flex-1 min-w-0">
             {loading ? (
               <div className="text-center py-12">
                 <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -171,7 +171,7 @@ export default function Products() {
                 <p className="text-gray-500 text-lg">No products found matching your filters.</p>
               </div>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>
