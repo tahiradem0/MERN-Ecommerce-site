@@ -2,6 +2,8 @@
 ⭐ If you like this project, give it a star on GitHub!
 Contributing is highly encouraged
 
+Note any issues
+
 <p align="center">
   <img src="assets/image.png" width="850" />
   <br />
