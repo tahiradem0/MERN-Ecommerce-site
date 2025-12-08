@@ -4,9 +4,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
 export const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 })
 
 // Add token to requests
@@ -23,6 +20,10 @@ api.interceptors.request.use((config) => {
         console.error("Error parsing auth storage:", error)
       }
     }
+  }
+  // Set Content-Type to application/json only if not FormData
+  if (!(config.data instanceof FormData)) {
+    config.headers["Content-Type"] = "application/json"
   }
   return config
 })

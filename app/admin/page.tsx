@@ -168,17 +168,13 @@ export default function AdminPage() {
       }
 
       if (editingProduct) {
-        await api.put(`/products/${editingProduct._id}`, formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
+        await api.put(`/products/${editingProduct._id}`, formDataToSend)
         toast({
           title: "Success",
           description: "Product updated successfully",
         })
       } else {
-        await api.post("/products", formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
+        await api.post("/products", formDataToSend)
         toast({
           title: "Success",
           description: "Product created successfully",

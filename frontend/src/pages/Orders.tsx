@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/authStore"
+import { useToastContext } from "../App"
 import api from "../config/api"
 import type { Order } from "../types"
 import { Package, Truck, CheckCircle, XCircle, Star } from "lucide-react"
@@ -12,8 +13,13 @@ import Button from "../components/ui/Button"
 export default function Orders() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
+  const { showToast } = useToastContext()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [ratingProduct, setRatingProduct] = useState<any>(null)
+  const [userRating, setUserRating] = useState(0)
+  const [review, setReview] = useState("")
+  const [submittingRating, setSubmittingRating] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -31,6 +37,29 @@ export default function Orders() {
       console.error("Error fetching orders:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSubmitRating = async () => {
+    if (!ratingProduct || userRating === 0) {
+      showToast("Please select a rating", "error")
+      return
+    }
+
+    setSubmittingRating(true)
+    try {
+      await api.post(`/products/${ratingProduct._id}/rating`, {
+        stars: userRating,
+        review: review,
+      })
+      showToast("Rating submitted successfully!", "success")
+      setRatingProduct(null)
+      setUserRating(0)
+      setReview("")
+    } catch (error: any) {
+      showToast(error.response?.data?.message || "Failed to submit rating", "error")
+    } finally {
+      setSubmittingRating(false)
     }
   }
 
@@ -204,7 +233,7 @@ export default function Orders() {
                         </div>
                         {order.status === "delivered" && (
                           <Button
-                            onClick={() => navigate(`/products/${item.product._id}`)}
+                            onClick={() => setRatingProduct({ ...item.product, orderId: order._id })}
                             className="flex items-center gap-2"
                           >
                             <Star className="w-4 h-4" />
@@ -224,6 +253,57 @@ export default function Orders() {
           </div>
         )}
       </div>
+
+      {/* Rating Modal */}
+      {ratingProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Rate Product</h2>
+            <div className="mb-4">
+              <img
+                src={ratingProduct.imageUrl || "/placeholder.svg"}
+                alt={ratingProduct.name}
+                className="w-full h-48 object-cover rounded-lg mb-4"
+              />
+              <h3 className="font-semibold text-lg text-gray-900 mb-2">{ratingProduct.name}</h3>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Your Rating</label>
+              <StarRating rating={userRating} onRate={setUserRating} size={32} />
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Review (Optional)</label>
+              <textarea
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={4}
+                placeholder="Share your experience with this product..."
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setRatingProduct(null)
+                  setUserRating(0)
+                  setReview("")
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                disabled={submittingRating}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitRating}
+                disabled={submittingRating || userRating === 0}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {submittingRating ? "Submitting..." : "Submit Rating"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
