@@ -85,6 +85,18 @@ const productSchema = new mongoose.Schema(
   },
 )
 
+// Pre-save middleware to calculate average rating
+productSchema.pre("save", function () {
+  if (this.ratings && this.ratings.length > 0) {
+    const totalStars = this.ratings.reduce((sum, r) => sum + Number(r.stars), 0)
+    this.averageRating = totalStars / this.ratings.length
+    this.totalRatings = this.ratings.length
+  } else {
+    this.averageRating = 0
+    this.totalRatings = 0
+  }
+})
+
 const Product = mongoose.model("Product", productSchema)
 
 export default Product

@@ -220,20 +220,16 @@ router.post("/:id/rating", protect, async (req, res) => {
       })
     }
 
-    // Calculate average rating properly
-    const totalStars = product.ratings.reduce((sum, r) => sum + Number(r.stars), 0)
-    product.averageRating = Math.round((totalStars / product.ratings.length) * 10) / 10
-    product.totalRatings = product.ratings.length
-
-    await product.save()
+    // Save product (pre-save hook will calculate averageRating)
+    const savedProduct = await product.save()
 
     // Mark product as rated in the order
     orderWithProduct.items[itemIndex].rated = true
     await orderWithProduct.save()
 
     res.json({
-      averageRating: product.averageRating,
-      totalRatings: product.totalRatings,
+      averageRating: savedProduct.averageRating,
+      totalRatings: savedProduct.totalRatings,
       userRating: stars,
     })
   } catch (error) {
@@ -255,9 +251,9 @@ router.get("/:id/ratings", async (req, res) => {
     }
 
     res.json({
-      averageRating: product.averageRating,
-      totalRatings: product.totalRatings,
-      ratings: product.ratings.sort((a, b) => b.createdAt - a.createdAt),
+      averageRating: product.averageRating || 0,
+      totalRatings: product.totalRatings || 0,
+      ratings: product.ratings.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
