@@ -295,18 +295,37 @@ export default function Admin() {
                   multiple
                   required={!editingProduct}
                   onChange={(e) => {
-                    const files = Array.from(e.target.files || [])
-                    if (files.length > 5) {
-                      alert("Maximum 5 images allowed")
+                    const newFiles = Array.from(e.target.files || [])
+                    const totalFiles = imageFiles.length + newFiles.length
+                    if (totalFiles > 5) {
+                      alert(`Maximum 5 images allowed. You can add ${5 - imageFiles.length} more.`)
                       return
                     }
-                    setImageFiles(files)
+                    setImageFiles(prev => [...prev, ...newFiles])
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {imageFiles.length > 0 && (
-                  <div className="mt-2 text-sm text-gray-600">
-                    {imageFiles.length} image{imageFiles.length > 1 ? 's' : ''} selected
+                  <div className="mt-2 space-y-2">
+                    <div className="text-sm text-gray-600">
+                      {imageFiles.length} image{imageFiles.length > 1 ? 's' : ''} selected
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {imageFiles.map((file, index) => (
+                        <div key={index} className="relative">
+                          <div className="w-16 h-16 bg-gray-100 rounded border flex items-center justify-center text-xs text-gray-500">
+                            {file.name.substring(0, 8)}...
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setImageFiles(prev => prev.filter((_, i) => i !== index))}
+                            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
