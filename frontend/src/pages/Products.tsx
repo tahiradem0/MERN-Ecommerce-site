@@ -562,17 +562,6 @@ export default function Products() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
-                              toggleWishlist(product._id)
-                            }}
-                            className="p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform"
-                          >
-                            <Heart 
-                              className={`w-5 h-5 ${wishlist.has(product._id) ? "fill-red-500 text-red-500" : "text-gray-400"}`}
-                            />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
                               setQuickViewProduct(product)
                             }}
                             className="p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform"
@@ -691,17 +680,7 @@ export default function Products() {
                               </span>
                             </div>
                           </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleWishlist(product._id)
-                            }}
-                            className="p-2 hover:scale-110 transition-transform"
-                          >
-                            <Heart 
-                              className={`w-6 h-6 ${wishlist.has(product._id) ? "fill-red-500 text-red-500" : "text-gray-400"}`}
-                            />
-                          </button>
+
                         </div>
 
                         <p className="text-gray-600 mb-4 flex-1">
