@@ -232,14 +232,32 @@ export default function ProductsPage() {
             {filteredAndSortedProducts.map((product) => (
               <Card key={product._id} className="group overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-square overflow-hidden bg-muted relative">
-                  <img
-                    src={
-                      product.imageUrl ||
-                      `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name) || "/placeholder.svg"}`
-                    }
-                    alt={product.name}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  />
+                  {product.images && product.images.length > 1 ? (
+                    <div className="relative h-full w-full">
+                      <img
+                        src={product.images[0]?.url || product.imageUrl || "/placeholder.svg"}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                      <div className="absolute bottom-2 left-2 flex gap-1">
+                        {product.images.slice(0, 3).map((_, index) => (
+                          <div key={index} className="w-2 h-2 bg-white/60 rounded-full" />
+                        ))}
+                        {product.images.length > 3 && (
+                          <span className="text-xs bg-black/50 text-white px-1 rounded">+{product.images.length - 3}</span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      src={
+                        product.imageUrl ||
+                        `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name) || "/placeholder.svg"}`
+                      }
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                  )}
                   {product.featured && <Badge className="absolute top-2 right-2">Featured</Badge>}
                   <Button
                     variant="ghost"

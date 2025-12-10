@@ -5,12 +5,18 @@ export interface Rating {
   createdAt: string
 }
 
+export interface ProductImage {
+  url: string
+  publicId: string
+}
+
 export interface Product {
   _id: string
   name: string
   description: string
   price: number
   category: string
+  images?: ProductImage[]
   imageUrl: string
   cloudinaryPublicId: string
   stock: number

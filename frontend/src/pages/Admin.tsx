@@ -27,7 +27,7 @@ export default function Admin() {
     discount: "",
     features: [""],
   })
-  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imageFiles, setImageFiles] = useState<File[]>([])
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -64,8 +64,10 @@ export default function Admin() {
       formDataToSend.append("discount", formData.discount)
       formDataToSend.append("features", JSON.stringify(formData.features.filter((f) => f.trim())))
 
-      if (imageFile) {
-        formDataToSend.append("image", imageFile)
+      if (imageFiles.length > 0) {
+        imageFiles.forEach((file) => {
+          formDataToSend.append("images", file)
+        })
       }
 
       if (editingProduct) {
@@ -86,7 +88,7 @@ export default function Admin() {
         discount: "",
         features: [""],
       })
-      setImageFile(null)
+      setImageFiles([])
       setShowForm(false)
       setEditingProduct(null)
       fetchProducts()
@@ -136,7 +138,7 @@ export default function Admin() {
       discount: "",
       features: [""],
     })
-    setImageFile(null)
+    setImageFiles([])
   }
 
   if (loading) {
@@ -285,15 +287,28 @@ export default function Admin() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Image {editingProduct && "(Leave empty to keep current image)"}
+                  Product Images (Max 5) {editingProduct && "(Leave empty to keep current images)"}
                 </label>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   required={!editingProduct}
-                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || [])
+                    if (files.length > 5) {
+                      alert("Maximum 5 images allowed")
+                      return
+                    }
+                    setImageFiles(files)
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                {imageFiles.length > 0 && (
+                  <div className="mt-2 text-sm text-gray-600">
+                    {imageFiles.length} image{imageFiles.length > 1 ? 's' : ''} selected
+                  </div>
+                )}
               </div>
               <div className="flex items-center">
                 <input
