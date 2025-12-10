@@ -25,6 +25,7 @@ interface Order {
     name: string
     price: number
     quantity: number
+    imageUrl?: string
   }>
   total: number
   status: string
@@ -319,17 +320,33 @@ export default function AdminOrdersPage() {
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       {selectedOrder.items.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center">
-                          <div>
+                        <div key={index} className="flex gap-4">
+                          <div className="w-16 h-16 rounded bg-muted overflow-hidden flex-shrink-0">
+                            <img
+                              src={
+                                item.imageUrl ||
+                                `/placeholder.svg?height=64&width=64&query=${encodeURIComponent(item.name)}`
+                              }
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement
+                                target.src = "/placeholder.svg"
+                              }}
+                            />
+                          </div>
+                          <div className="flex-1">
                             <p className="font-medium">{item.name}</p>
                             <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                           </div>
-                          <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                          <div className="text-right">
+                            <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                          </div>
                         </div>
                       ))}
-                      <Separator />
-                      <div className="flex justify-between items-center text-lg font-bold">
-                        <span>Total</span>
+                      {selectedOrder.items.length > 1 && <Separator />}
+                      <div className="flex justify-between items-center text-lg font-bold pt-2">
+                        <span>Total Amount</span>
                         <span>${selectedOrder.total.toFixed(2)}</span>
                       </div>
                     </div>

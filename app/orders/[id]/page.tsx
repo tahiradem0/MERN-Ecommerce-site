@@ -17,7 +17,7 @@ interface OrderItem {
   name: string
   price: number
   quantity: number
-  imageUrl: string
+  imageUrl?: string
 }
 
 interface Order {
@@ -63,6 +63,8 @@ export default function OrderDetailPage() {
   const fetchOrder = async (orderId: string) => {
     try {
       const { data } = await api.get<Order>(`/orders/${orderId}`)
+      console.log("Order data:", data)
+      console.log("Order items:", data.items)
       setOrder(data)
     } catch (error: any) {
       console.error("Error fetching order:", error)
@@ -192,10 +194,14 @@ export default function OrderDetailPage() {
                       <img
                         src={
                           item.imageUrl ||
-                          `/placeholder.svg?height=80&width=80&query=${encodeURIComponent(item.name) || "/placeholder.svg"}`
+                          `/placeholder.svg?height=80&width=80&query=${encodeURIComponent(item.name)}`
                         }
                         alt={item.name}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          target.src = "/placeholder.svg"
+                        }}
                       />
                     </div>
                     <div className="flex-1">

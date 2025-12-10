@@ -130,7 +130,9 @@ router.get("/myorders", protect, async (req, res) => {
 // @access  Private
 router.get("/:id", protect, async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate("user", "name email")
+    const order = await Order.findById(req.params.id)
+      .populate("user", "name email")
+      .populate("items.product", "name price imageUrl")
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" })
@@ -141,7 +143,16 @@ router.get("/:id", protect, async (req, res) => {
       return res.status(403).json({ message: "Not authorized" })
     }
 
-    res.json(order)
+    // Ensure imageUrl is available for each item
+    const orderWithImages = {
+      ...order.toObject(),
+      items: order.items.map(item => ({
+        ...item.toObject(),
+        imageUrl: item.imageUrl || (item.product && item.product.imageUrl) || null
+      }))
+    }
+
+    res.json(orderWithImages)
   } catch (error) {
     console.error("Error fetching order:", error)
     res.status(500).json({ message: "Server error" })
@@ -153,8 +164,21 @@ router.get("/:id", protect, async (req, res) => {
 // @access  Private/Admin
 router.get("/", protect, admin, async (req, res) => {
   try {
-    const orders = await Order.find({}).populate("user", "name email").sort({ createdAt: -1 })
-    res.json(orders)
+    const orders = await Order.find({})
+      .populate("user", "name email")
+      .populate("items.product", "name price imageUrl")
+      .sort({ createdAt: -1 })
+    
+    // Ensure imageUrl is available for each item in each order
+    const ordersWithImages = orders.map(order => ({
+      ...order.toObject(),
+      items: order.items.map(item => ({
+        ...item.toObject(),
+        imageUrl: item.imageUrl || (item.product && item.product.imageUrl) || null
+      }))
+    }))
+    
+    res.json(ordersWithImages)
   } catch (error) {
     console.error("Error fetching orders:", error)
     res.status(500).json({ message: "Server error" })
