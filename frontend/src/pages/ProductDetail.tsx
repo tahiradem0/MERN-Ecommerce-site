@@ -11,6 +11,66 @@ import { ShoppingCart, ArrowLeft } from "lucide-react"
 import Button from "../components/ui/Button"
 import StarRating from "../components/StarRating"
 
+function ProductImageGallery({ product }: { product: Product }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const images = product.images && product.images.length > 0 ? product.images : [{ url: product.imageUrl }]
+  
+  return (
+    <div className="space-y-4">
+      <div className="relative">
+        <img
+          src={images[currentImageIndex]?.url || "/placeholder.svg"}
+          alt={product.name}
+          className="w-full h-[500px] object-cover rounded-lg"
+        />
+        <div className="absolute top-4 left-4 flex gap-2">
+          {product.featured && (
+            <span className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
+              Featured
+            </span>
+          )}
+          {product.discount > 0 && (
+            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              {product.discount}% OFF
+            </span>
+          )}
+        </div>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={() => setCurrentImageIndex(prev => prev > 0 ? prev - 1 : images.length - 1)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors text-xl"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => setCurrentImageIndex(prev => prev < images.length - 1 ? prev + 1 : 0)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors text-xl"
+            >
+              ›
+            </button>
+          </>
+        )}
+      </div>
+      {images.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {images.map((image, index) => (
+            <img
+              key={index}
+              src={image.url}
+              alt={`${product.name} ${index + 1}`}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-20 h-20 object-cover rounded cursor-pointer border-2 transition-colors flex-shrink-0 ${
+                index === currentImageIndex ? "border-blue-500" : "border-gray-200 hover:border-blue-300"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -138,28 +198,8 @@ export default function ProductDetail() {
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
-            {/* Product Image */}
-            <div className="space-y-4">
-              <div className="relative">
-                <img
-                  src={product.imageUrl || "/placeholder.svg"}
-                  alt={product.name}
-                  className="w-full h-[500px] object-cover rounded-lg"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  {product.featured && (
-                    <span className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
-                      Featured
-                    </span>
-                  )}
-                  {product.discount > 0 && (
-                    <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {product.discount}% OFF
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
+            {/* Product Image Gallery */}
+            <ProductImageGallery product={product} />
 
             {/* Product Info */}
             <div className="space-y-6">
