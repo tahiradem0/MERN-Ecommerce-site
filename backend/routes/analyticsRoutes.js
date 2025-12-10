@@ -127,18 +127,74 @@ router.get("/", protect, admin, async (req, res) => {
         revenue: item.revenue
       }))
 
+    // Additional analytics
+    const averageOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0
+    const totalCustomers = await User.countDocuments({ role: 'customer' })
+    const newCustomers = await User.countDocuments({ role: 'customer', createdAt: { $gte: startDate } })
+    
+    // Order status breakdown
+    const orderStatusData = await Order.aggregate([
+      { $match: { createdAt: { $gte: startDate } } },
+      { $group: { _id: '$status', count: { $sum: 1 }, revenue: { $sum: '$totalAmount' } } }
+    ])
+    
+    // Low stock products
+    const lowStockProducts = await Product.find({ stock: { $lte: 10, $gt: 0 } })
+      .sort({ stock: 1 })
+      .limit(5)
+      .select('name stock imageUrl')
+    
+    // Out of stock products
+    const outOfStockCount = await Product.countDocuments({ stock: 0 })
+    
+    // Monthly revenue comparison
+    const monthlyRevenue = await Order.aggregate([
+      { $match: { createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) } } },
+      { $group: {
+        _id: { month: { $month: '$createdAt' } },
+        revenue: { $sum: '$totalAmount' },
+        orders: { $sum: 1 }
+      }},
+      { $sort: { '_id.month': 1 } }
+    ])
+    
+    // Customer retention (repeat customers)
+    const customerOrders = await Order.aggregate([
+      { $group: { _id: '$user', orderCount: { $sum: 1 } } },
+      { $group: {
+        _id: null,
+        totalCustomers: { $sum: 1 },
+        repeatCustomers: { $sum: { $cond: [{ $gt: ['$orderCount', 1] }, 1, 0] } }
+      }}
+    ])
+    
+    const retentionRate = customerOrders[0] ? 
+      (customerOrders[0].repeatCustomers / customerOrders[0].totalCustomers) * 100 : 0
+
     res.json({
       stats: {
         totalRevenue: Math.round(totalRevenue),
         totalOrders: orders.length,
         totalProducts: products.length,
         totalUsers: users.length,
+        totalCustomers,
+        newCustomers,
+        averageOrderValue: Math.round(averageOrderValue * 100) / 100,
         revenueGrowth: Math.round(revenueGrowth * 10) / 10,
         ordersGrowth: Math.round(ordersGrowth * 10) / 10,
+        outOfStockCount,
+        retentionRate: Math.round(retentionRate * 10) / 10
       },
       revenueData,
       categoryData: categoryChartData,
-      topProducts
+      topProducts,
+      orderStatusData,
+      lowStockProducts,
+      monthlyRevenue: monthlyRevenue.map(item => ({
+        month: new Date(2024, item._id.month - 1).toLocaleDateString('en-US', { month: 'short' }),
+        revenue: Math.round(item.revenue),
+        orders: item.orders
+      }))
     })
   } catch (error) {
     console.error("Analytics error:", error)
