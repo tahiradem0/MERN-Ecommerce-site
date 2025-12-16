@@ -37,7 +37,7 @@ Developed by **Kirubel Mesfin**, this project delivers a seamless shopping exper
 **Backend:** Node.js, Express.js  
 **Database:** MongoDB (Atlas)  
 **Image Storage:** Cloudinary  
-**Other Tools:** bcrypt, multer, dotenv, nodemon  
+
 
 ---
 
