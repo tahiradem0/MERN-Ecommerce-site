@@ -1,6 +1,6 @@
 # 🛍️ MERN E-Commerce Platform (In-Development)
 ⭐ If you like this project, give it a star on GitHub!
-Contributing is encouraged
+Contributing is highly encouraged
 
 Note any issues
 
