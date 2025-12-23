@@ -246,7 +246,7 @@ Feel free to fork this project and submit pull requests.
 ## 👨‍💻 Developer
 
 **Kirubel Mesfin**  
-💼 Passionate full-stack developer building real-world MERN applications.  
+💼 Passionate full-stack developer building real-world  applications.  
 📧 Reach out: [GitHub Profile](https://github.com/kirubelm1)
 
 ---
