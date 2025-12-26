@@ -247,7 +247,7 @@ Feel free to fork this project and submit pull requests.
 
 **Kirubel Mesfin**  
 💼 Passionate full-stack developer building real-world  applications.  
-📧 Reach out: [GitHub Profile](https://github.com/kirubelm1)
+📧 Reach out: [GitHub Profile](https://github.com/tahiradem0)
 
 ---
 
